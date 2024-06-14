@@ -120,3 +120,32 @@ ylabel("Delay, ps")
 setfunc(gca,11,"off",false)
 
 
+function c = redblue2(m)
+%REDBLUE    Shades of red and blue color map
+%   REDBLUE(M), is an M-by-3 matrix that defines a colormap.
+%   The colors begin with bright blue, range through shades of
+%   blue to white, and then through shades of red to bright red.
+%   REDBLUE, by itself, is the same length as the current figure's
+%   colormap. If no figure exists, MATLAB creates one.
+%
+%   For example, to reset the colormap of the current figure:
+%
+%             colormap(redblue)
+%
+%   See also HSV, GRAY, HOT, BONE, COPPER, PINK, FLAG, 
+%   COLORMAP, RGBPLOT.
+%   Adam Auton, 9th October 2009
+if nargin < 1
+    m = size(get(gcf,'colormap'),1); 
+end
+red   = [ linspace(0,1,11)' [.0196 .1294 .2627 .5725 .8196 .9680 .9921 .9569 .8392 .698  .4039]'];
+green = [ linspace(0,1,11)' [.1882    .4 .5765 .7725 .8980 .9686 .8588 .6470 .3764 .0941     0]'];
+blue  = [ linspace(0,1,11)' [.3803 .6745 .7647 .8705 .9412 .9686 .7803 .5098 .3019 .1686 .1216]'];
+
+interpolator = linspace(0,1,m)';
+
+r = interp1(red(:,1),red(:,2),interpolator);
+g = interp1(green(:,1),green(:,2),interpolator);
+b = interp1(blue(:,1),blue(:,2),interpolator);
+c = [r g b]; 
+end
