@@ -23,11 +23,15 @@ data = convert3D(data,time);% permute data to max with dimension of time-axis
 time_interp = linspace(timerange(1),timerange(2),num_points); 
 time_interp = time_interp(:);
 
-data_interp = interp1(time,data,time_interp);% Interpolate data onto newly generated time-axis
+data_interp = interp1(time,data,time_interp,"linear");% Interpolate data onto newly generated time-axis
 data_interp(isnan(data_interp)) = 0;% Remove NaNs
 
-% Data is concatenated to ensure artifact-free Fourier-Transform later
-data_interp2 = cat(1,ones(size(data_interp)).*data_interp(1,:,:,:),data_interp,ones(size(data_interp)).*data_interp(end,:,:,:));
+% Data for Fourier Transform is taken from bigger timerange to ensure
+% artifact-free FT later-on (*3, extended in negative and positive
+% direction)
+time_interp2 = linspace(timerange(1)-diff(timerange),timerange(2)+diff(timerange),num_points*3); 
+time_interp2 = time_interp2(:);
+data_interp2 = interp1(time,data,time_interp2,"linear","extrap");% Interpolate data onto newly generated time-axis
 
 %optional: Pass data over low-pass filter
 % data_interp2 = lowpass(data_interp.',1e-15).'; 
@@ -43,7 +47,7 @@ periods = permute(periods(:),[3 2 1]);
 widths  = permute(widths(:),[4 3 2 1]);
 
 % Generate wavelets and zero-pad to match size of dataset
-wavelets = exp(-1i*(pi/2+(time_interp-mean(time_interp))./periods)-((time_interp-mean(time_interp))./widths).^2);
+wavelets = exp(-1i*(pi/2+2*pi*(time_interp-mean(time_interp))./periods)-((time_interp-mean(time_interp))./widths).^2);
 wavelets = cat(1,zeros(size(wavelets)),wavelets,zeros(size(wavelets)));
 
 
@@ -55,35 +59,4 @@ output = output(length(time_interp)+1:end-length(time_interp),:,:,:);
 
 % Reduce wavelet array to match length of time-axis accordingly
 wavelets = wavelets(length(time_interp)+1:end-length(time_interp),:,:,:);
-end
-
-function Matrix3D = convert3D(Input, varargin)
-% Converts the dataset to be in line with the axes (Axis1,Axis2) specified. 
-% Can be used with 1,2 and 3...x dimensional datasets.
-% Input dataset will always be sorted in descending mannor when nothing is
-% specified.
-
-prelimsize       = size(Input);
-dimensionality   = length(prelimsize);
-decision         = zeros(dimensionality,1);
-permutationorder = zeros(dimensionality,1);
-
-if isempty(varargin)
-    decision = sort(prelimsize,"descend");
-else
-    for ij = 1:length(varargin)
-        if all(length(varargin{ij}) ~= 1) && ~isempty(varargin{ij})
-            decision(ij) = length(varargin{ij});
-        elseif all(size(varargin{ij}) == 1)
-            decision(ij) = varargin{ij};
-        end
-    end
-    decision(decision==0) = sort(prelimsize(~ismember(prelimsize,decision)),"descend");
-end
-
-for ij = 1:dimensionality
-    permutationorder(ij) = find(floor(decision(ij)) == prelimsize,1);
-end
-
-Matrix3D = permute(Input,permutationorder);
 end
