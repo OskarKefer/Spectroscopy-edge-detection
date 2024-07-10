@@ -43,7 +43,7 @@ periods = permute(periods(:),[3 2 1]);
 widths  = permute(widths(:),[4 3 2 1]);
 
 % Generate wavelets and zero-pad to match size of dataset
-wavelets = exp(-1i*(pi/2+(time_interp-mean(time_interp))./periods)-((time_interp-mean(time_interp))./widths).^2);
+wavelets = exp(-1i*(pi/2+2*pi*(time_interp-mean(time_interp))./periods)-((time_interp-mean(time_interp))./widths).^2);
 wavelets = cat(1,zeros(size(wavelets)),wavelets,zeros(size(wavelets)));
 
 
