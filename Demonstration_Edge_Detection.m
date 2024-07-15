@@ -41,7 +41,7 @@ PP.Data = PP.Data./max(PP.Data,[],"all");
 
 % Input-parameter for wavelet-construction
 width  = .65;% Width of gaussian envelope (Gamma_w)
-period = width/6.5;% Period of oscillation (T_w)
+period = width/1.2;% Period of oscillation (T_w)
 
 % Construct wavelet and perform convolution with PP-data. Read documentation of edgeDet for more information
 [convo, time_interp, data_interp, wavelet] = edgeDet(PP.time,PP.Data,[-10 10],length(PP.time(abs(PP.time)<=15)),period,width);
