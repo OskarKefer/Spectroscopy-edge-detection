@@ -33,15 +33,15 @@ decays  = 100;
 % decay functions.
 sigma    = @(x) 2*sqrt(2*x)/log(2);% modifier for width
 gaus     = @(x) x(:,1).*exp(-((PP.lambda-x(:,2))./sigma(x(:,3))).^2);% gauss-function
-expdecay = @(x) erfc(-(PP.time-x)/.55)/2.*exp(-(PP.time-x)/decays);% exponential-decay function + onset
+expdecay = @(x) erfc(-(PP.time-x)/.55)/2.*exp(-(PP.time-x)/decays);% exponential-decay function + onset ; Gamma_e chosen as 0.55 ps
 
 % Generate PP-data and normalize it
 PP.Data = sum(gaus(gausses),1).*expdecay(dispersion); 
 PP.Data = PP.Data./max(PP.Data,[],"all");
 
 % Input-parameter for wavelet-construction
-width  = .65;% Width of gaussian envelope (Gamma_w)
-period = width*1.04/1.88;% Period of oscillation (T_w)
+width  = .55*1.88;% Width of gaussian envelope (Gamma_w)
+period = .55*1.04;% Period of oscillation (T_w)
 
 % Construct wavelet and perform convolution with PP-data. Read documentation of edgeDet for more information
 [convo, time_interp, data_interp, wavelet] = edgeDet(PP.time,PP.Data,[-10 10],length(PP.time(abs(PP.time)<=15)),period,width);
