@@ -3,7 +3,7 @@ function [output, time_interp, data_interp, wavelets] = edgeDet(time, data, time
 % edge-detection problem) in any kind of time-resolved data (1-|2-D) by
 % convolution of wavelets (periodically oscillating function with a
 % gaussian envelope (in time domain) with the original dataset.
-% If you are using this method, please cite the corresponding publication (DOI:XXXXXX.XXX)
+% If you are using this method, please cite the corresponding publication (DOI:10.1364/AO.532878)
 
 % Author: Oskar Kefer, for any inquiry, please contact me!
 % E-Mail: oskar.kefer@uni-heidelberg.de
